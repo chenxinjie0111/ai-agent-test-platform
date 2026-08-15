@@ -1,0 +1,20 @@
+# .dockerignore：构建镜像时排除这些文件（类似 .gitignore）
+# 减小镜像体积，加速构建
+
+.env
+.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.github/
+logs/
+reports/
+.pytest_cache/
+htmlcov/
+.coverage
+*.md
+Dockerfile
+.dockerignore

@@ -1,0 +1,46 @@
+# GitHub Actions CI：每次 push 代码自动运行测试
+#
+# 触发条件：push 到 main 分支，或创建 Pull Request
+# 执行内容：安装依赖 → 运行单元测试 → 报告结果
+#
+# 为什么只跑单元测试不跑集成测试：
+#   集成测试需要真实 LLM API（要花钱、有延迟、结果不稳定）。
+#   CI 的核心目的是"代码没有语法/逻辑错误"，单元测试足够。
+#   集成测试在本地跑 run_eval.py 即可。
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest    # 在 Ubuntu 虚拟机上运行
+
+    steps:
+      # 第 1 步：拉取代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 第 2 步：安装 Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 第 3 步：安装依赖
+      # --no-cache-dir 减少缓存占用
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 第 4 步：运行单元测试（不需要 LLM API Key）
+      # 只跑不依赖 LLM 的测试：指标计算逻辑 + 权限单元测试
+      - name: Run unit tests
+        run: |
+          pytest tests/test_metrics.py -v --tb=short
+          pytest tests/test_permission.py::TestPermissionUnit -v --tb=short

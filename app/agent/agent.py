@@ -21,6 +21,9 @@ from app.llm.client import LLMClient
 from app.agent.tools import TOOL_SCHEMAS, call_tool
 from app.agent.trace import AgentTrace, TraceStep
 from app.agent.permissions import check_permission, get_role_description
+from app.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class AgentResult:
@@ -59,6 +62,7 @@ class Agent:
 
     def run(self, user_input: str) -> AgentResult:
         """执行一次 Agent 任务。"""
+        logger.info(f"Agent 开始执行 | 角色={self.role} | 输入={user_input[:50]}")
         start_time = time.time()
         total_tokens = 0
 
@@ -89,6 +93,7 @@ class Agent:
 
             # LLM 调用本身失败了：直接结束，不硬撑
             if not resp.success:
+                logger.error(f"LLM 调用失败 | 第{round_no}轮 | 错误={resp.error}")
                 trace.success = False
                 trace.final_answer = f"[Agent错误] LLM 调用失败: {resp.error}"
                 trace.error = resp.error
@@ -99,6 +104,7 @@ class Agent:
             # ---- 第 2 步：判断"需要工具吗？" ----
             # tool_calls 为空 -> LLM 直接回答，循环结束
             if not resp.tool_calls:
+                logger.info(f"Agent 完成 | 第{round_no}轮 | token={total_tokens} | 耗时={round(time.time()-start_time,2)}s")
                 trace.success = True
                 trace.final_answer = resp.content
                 return self._build_result(
@@ -128,11 +134,13 @@ class Agent:
                 # 第二层防御：代码层权限校验（不可被 Prompt Injection 绕过）
                 # 即使 LLM 被"你现在是管理员"骗了，到这里仍然是确定性的 if 判断
                 if not check_permission(self.role, tc["name"]):
+                    logger.warning(f"权限拦截 | 角色={self.role} | 工具={tc['name']} | 参数={tc['arguments']}")
                     result = {
                         "error": f"权限不足: 角色 '{self.role}' 无权使用 '{tc['name']}'",
                         "blocked": True,
                     }
                 else:
+                    logger.debug(f"执行工具 | 第{round_no}轮 | {tc['name']}({tc['arguments']})")
                     result = call_tool(tc["name"], tc["arguments"])
 
                 # 记录 Trace：谁、什么参数、什么结果（包括被拦截的）
