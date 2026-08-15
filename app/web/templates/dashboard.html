@@ -4,9 +4,20 @@
 
 {% block content %}
 
+<!-- ====== 顶部操作栏 ====== -->
+<div class="toolbar">
+    <div class="toolbar-left">
+        <h2 class="section-title" style="margin-bottom:0;">指标概览</h2>
+    </div>
+    <div class="toolbar-right">
+        <button id="btn-run-all" class="btn-run-all" onclick="runAllTests()">
+            ▶ 运行全部测试
+        </button>
+    </div>
+</div>
+
 <!-- ====== 指标概览区 ====== -->
 <section class="section">
-    <h2 class="section-title">指标概览</h2>
     <div class="metrics-grid">
         <!-- 5 个准确率指标卡片 -->
         <div class="metric-card">
@@ -111,12 +122,28 @@
                     <span class="metric-tag tag-fail">FAIL</span>
                     {% endif %}
                 </td>
-                <td><a href="/case/{{ case.case_id }}" class="btn-detail">详情</a></td>
+                <td class="case-actions">
+                    <a href="/case/{{ case.case_id }}" class="btn-detail">详情</a>
+                    <button class="btn-run" onclick="runSingleTest('{{ case.case_id }}')">运行</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </section>
+
+<!-- ====== 运行结果模态框 ====== -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modal-title">运行结果</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <!-- 运行结果动态填充 -->
+        </div>
+    </div>
+</div>
 
 <!-- ====== 图表 JS ====== -->
 <script>
@@ -170,6 +197,125 @@ new Chart(ctx2, {
         scales: {
             r: { beginAtZero: true, max: 100 }
         }
+    }
+});
+
+// ====== 运行测试相关 JS ======
+
+/**
+ * 运行单个测试用例
+ * 点击"运行"按钮时调用：POST /api/run-test/{caseId}
+ * 返回结果后在模态框中展示 Trace + 指标
+ */
+function runSingleTest(caseId) {
+    showModal(caseId + ' 运行中...', '<div class="loading-spinner">⏳ Agent 运行中，请稍候...</div>');
+
+    fetch('/api/run-test/' + caseId, { method: 'POST' })
+        .then(function(resp) {
+            if (!resp.ok) {
+                return resp.json().then(function(err) {
+                    throw new Error(err.detail || '运行失败');
+                });
+            }
+            return resp.json();
+        })
+        .then(function(data) {
+            renderTestResult(data);
+        })
+        .catch(function(err) {
+            showModal('运行失败', '<div class="error-msg">❌ ' + err.message + '</div>');
+        });
+}
+
+/**
+ * 运行全部测试
+ * 点击"运行全部测试"按钮时调用：POST /api/run-all
+ * 运行完成后刷新页面
+ */
+function runAllTests() {
+    var btn = document.getElementById('btn-run-all');
+    var originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ 运行中...';
+    btn.classList.add('btn-loading');
+
+    fetch('/api/run-all', { method: 'POST' })
+        .then(function(resp) {
+            if (!resp.ok) {
+                return resp.json().then(function(err) {
+                    throw new Error(err.detail || '运行失败');
+                });
+            }
+            return resp.json();
+        })
+        .then(function(data) {
+            alert(data.message + '\n点击确定刷新页面查看最新报告');
+            window.location.reload();
+        })
+        .catch(function(err) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+            btn.classList.remove('btn-loading');
+            alert('运行失败: ' + err.message);
+        });
+}
+
+/**
+ * 在模态框中渲染单个测试的运行结果
+ * 包含：指标卡片 + Agent Trace 可视化
+ */
+function renderTestResult(data) {
+    var metricsHtml = '<div class="modal-metrics">' +
+        metricCard('工具选择', data.tool_selection) +
+        metricCard('参数准确', data.tool_parameter) +
+        metricCard('任务成功', data.task_success) +
+        metricCard('回答一致', data.answer_consistent) +
+        metricCard('工作流', data.workflow_success) +
+        '</div>';
+
+    var perfHtml = '<div class="modal-perf">' +
+        '<span>响应时间: <strong>' + data.response_time + 's</strong></span>' +
+        '<span>Token: <strong>' + data.tokens + '</strong></span>' +
+        '</div>';
+
+    var traceHtml = '<h4 class="modal-section-title">Agent Trace</h4>' +
+        renderTrace(data.trace);
+
+    showModal(data.case_id + ' 运行结果', metricsHtml + perfHtml + traceHtml);
+}
+
+/**
+ * 生成单个指标卡片的 HTML
+ */
+function metricCard(label, passed) {
+    var cls = passed ? 'tag-pass' : 'tag-fail';
+    var text = passed ? 'PASS' : 'FAIL';
+    return '<div class="modal-metric-card">' +
+        '<span class="metric-label">' + label + '</span>' +
+        '<span class="metric-tag ' + cls + '">' + text + '</span>' +
+        '</div>';
+}
+
+/**
+ * 显示模态框
+ */
+function showModal(title, bodyHtml) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = bodyHtml;
+    document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+/**
+ * 关闭模态框
+ */
+function closeModal() {
+    document.getElementById('modal-overlay').style.display = 'none';
+}
+
+// 点击遮罩层关闭模态框
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
     }
 });
 </script>

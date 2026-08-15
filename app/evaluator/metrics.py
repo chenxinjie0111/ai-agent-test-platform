@@ -183,6 +183,10 @@ class EvalReport:
                 {
                     "case_id": cr.case.id,
                     "input": cr.case.input,
+                    "expected_tool": cr.case.expected_tool,
+                    "expected_arguments": cr.case.expected_arguments,
+                    "expected_keywords": cr.case.expected_keywords,
+                    "is_workflow": cr.case.is_workflow,
                     "tool_selection": cr.tool_selection_correct,
                     "tool_parameter": cr.tool_parameter_correct,
                     "task_success": cr.task_success,
@@ -190,7 +194,8 @@ class EvalReport:
                     "workflow_success": cr.workflow_success,
                     "response_time": cr.agent_result.total_time,
                     "tokens": cr.agent_result.total_tokens,
-                    "answer": cr.agent_result.answer[:200],
+                    "answer": cr.agent_result.answer,
+                    "trace": cr.agent_result.trace.to_dict(),
                 }
                 for cr in self.case_results
             ],

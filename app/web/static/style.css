@@ -244,3 +244,332 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== 工具栏 ===== */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 12px;
+}
+
+/* ===== 运行按钮 ===== */
+.btn-run-all {
+    padding: 10px 24px;
+    background: #10b981;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-run-all:hover {
+    background: #059669;
+}
+
+.btn-run-all:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn-run-all.btn-loading {
+    background: #9ca3af;
+}
+
+.btn-run {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #f59e0b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-left: 4px;
+    transition: background 0.2s;
+}
+
+.btn-run:hover {
+    background: #d97706;
+}
+
+.case-actions {
+    white-space: nowrap;
+}
+
+/* ===== 模态框 ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 900px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin-bottom: 40px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+    color: #1a1a2e;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: #6b7280;
+}
+
+.error-msg {
+    padding: 20px;
+    background: #f8d7da;
+    border-radius: 6px;
+    color: #721c24;
+    font-size: 14px;
+}
+
+.modal-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.modal-metric-card {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-perf {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: #eff6ff;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1e40af;
+}
+
+.modal-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 12px;
+    padding-left: 10px;
+    border-left: 3px solid #3b82f6;
+}
+
+/* ===== Trace 视图 ===== */
+.trace-hint {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.trace-expected {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.trace-expected-item {
+    font-size: 13px;
+}
+
+.trace-expected-item code {
+    background: #e0f2fe;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.trace-flow {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.trace-empty {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-size: 14px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.trace-step {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+.trace-step-user {
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+}
+
+.trace-step-tool {
+    background: #f0fdf4;
+    border-left: 3px solid #22c55e;
+}
+
+.trace-step-blocked {
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+}
+
+.trace-step-error {
+    background: #fef2f2;
+    border-left: 3px solid #ef4444;
+}
+
+.trace-step-final {
+    background: #f5f3ff;
+    border-left: 3px solid #8b5cf6;
+}
+
+.trace-step-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+    line-height: 40px;
+}
+
+.trace-step-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.trace-step-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.trace-step-body {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.6;
+}
+
+.trace-section {
+    margin-bottom: 8px;
+}
+
+.trace-label {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.trace-code {
+    background: #1a1a2e;
+    color: #a5b4fc;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: "Fira Code", "Consolas", "Monaco", monospace;
+    overflow-x: auto;
+    margin: 4px 0;
+    line-height: 1.5;
+}
+
+.trace-answer-box {
+    background: rgba(139, 92, 246, 0.05);
+    padding: 12px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.trace-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: #9ca3af;
+    padding: 4px 0;
+}
+
+.trace-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #f3f4f6;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.trace-stat-item strong {
+    color: #1a1a2e;
+}
