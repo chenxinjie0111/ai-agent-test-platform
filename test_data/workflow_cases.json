@@ -1,0 +1,11 @@
+[
+    {
+        "id": "wf_001",
+        "question": "北京今天天气怎么样？如果下雨，帮我创建明天早上8点的\"记得带伞\"提醒",
+        "expected_tools_sequence": ["weather_tool", "calendar_tool"],
+        "weather_city": "北京",
+        "expected_weather": "小雨",
+        "expected_title_keyword": "伞",
+        "expected_answer_keywords": ["提醒", "已创建", "已设置", "创建", "设置"]
+    }
+]

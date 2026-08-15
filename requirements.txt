@@ -1,0 +1,17 @@
+# ===== 阶段一：LLM 调用基础 =====
+# openai: OpenAI 官方 SDK，所有 OpenAI 兼容 API（DeepSeek/硅基流动/通义等）都用它调
+openai>=1.0.0
+# python-dotenv: 从 .env 读取配置，避免把 API Key 写死在代码里
+python-dotenv>=1.0.0
+
+# ===== 阶段三：Agent 功能测试 =====
+# pytest: Python 最流行的测试框架，用来自动运行测试用例、生成报告
+pytest>=8.0.0
+
+# ===== 阶段六：Web 评测报告平台 =====
+# fastapi: 轻量级 Web 框架，用来写后端 API 和页面路由
+fastapi>=0.100.0
+# uvicorn: ASGI 服务器，用来运行 FastAPI 应用
+uvicorn>=0.20.0
+# jinja2: 模板引擎，用 HTML 模板渲染动态数据
+jinja2>=3.0.0

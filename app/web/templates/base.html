@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Agent 测试报告{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Chart.js：CDN 引入，不需要 npm install -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a href="/" class="logo">AI Agent 测试报告平台</a>
+            <span class="subtitle">自动化评测 · 量化指标 · 可视化展示</span>
+        </div>
+    </header>
+
+    <!-- 主内容区域，子模板填充 -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p>Powered by FastAPI + Jinja2 + Chart.js &nbsp;|&nbsp; 数据来源：eval_report.json</p>
+    </footer>
+</body>
+</html>

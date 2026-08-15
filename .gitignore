@@ -1,0 +1,28 @@
+# 密钥文件绝不提交到 Git（安全红线）
+.env
+
+# Python 虚拟环境
+.venv/
+venv/
+
+# Python 编译缓存
+__pycache__/
+*.pyc
+
+# 测试报告与缓存
+reports/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# 日志文件
+logs/
+
+# 打包产物
+*.egg-info/
+dist/
+build/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db

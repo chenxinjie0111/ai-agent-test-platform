@@ -1,0 +1,23 @@
+[
+    {
+        "id": "ts_001",
+        "question": "北京今天多少度？",
+        "expected_tool": "weather_tool",
+        "param_key": "city",
+        "expected_value": "北京"
+    },
+    {
+        "id": "ts_002",
+        "question": "帮我算一下 12345 乘以 678",
+        "expected_tool": "calculator_tool",
+        "param_key": "expression",
+        "expected_value": "12345"
+    },
+    {
+        "id": "ts_003",
+        "question": "明天早上八点提醒我开会",
+        "expected_tool": "calendar_tool",
+        "param_key": "title",
+        "expected_value": "开会"
+    }
+]

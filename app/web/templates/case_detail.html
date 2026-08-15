@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}用例 {{ case.case_id }} - AI Agent 测试报告{% endblock %}
+
+{% block content %}
+
+<!-- 返回按钮 -->
+<a href="/" class="back-link">← 返回仪表盘</a>
+
+<!-- 用例基本信息 -->
+<section class="section">
+    <h2 class="section-title">用例 {{ case.case_id }}</h2>
+
+    <div class="detail-grid">
+        <!-- 用户输入 -->
+        <div class="detail-card">
+            <h3 class="detail-label">用户输入</h3>
+            <p class="detail-content">{{ case.input }}</p>
+        </div>
+
+        <!-- Agent 回答 -->
+        <div class="detail-card">
+            <h3 class="detail-label">Agent 回答</h3>
+            <div class="detail-content answer-box">{{ case.answer }}</div>
+        </div>
+    </div>
+</section>
+
+<!-- 指标明细 -->
+<section class="section">
+    <h2 class="section-title">指标明细</h2>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span class="metric-label">工具选择</span>
+            <span class="metric-value">{{ "正确" if case.tool_selection else "错误" }}</span>
+            <span class="metric-tag {{ 'tag-pass' if case.tool_selection else 'tag-fail' }}">
+                {{ "PASS" if case.tool_selection else "FAIL" }}
+            </span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">参数准确</span>
+            <span class="metric-value">{{ "正确" if case.tool_parameter else "错误" }}</span>
+            <span class="metric-tag {{ 'tag-pass' if case.tool_parameter else 'tag-fail' }}">
+                {{ "PASS" if case.tool_parameter else "FAIL" }}
+            </span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">任务成功</span>
+            <span class="metric-value">{{ "成功" if case.task_success else "失败" }}</span>
+            <span class="metric-tag {{ 'tag-pass' if case.task_success else 'tag-fail' }}">
+                {{ "PASS" if case.task_success else "FAIL" }}
+            </span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">回答一致</span>
+            <span class="metric-value">{{ "一致" if case.answer_consistent else "不一致" }}</span>
+            <span class="metric-tag {{ 'tag-pass' if case.answer_consistent else 'tag-fail' }}">
+                {{ "PASS" if case.answer_consistent else "FAIL" }}
+            </span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">工作流</span>
+            <span class="metric-value">{{ "完成" if case.workflow_success else "未完成" }}</span>
+            <span class="metric-tag {{ 'tag-pass' if case.workflow_success else 'tag-fail' }}">
+                {{ "PASS" if case.workflow_success else "FAIL" }}
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- 性能数据 -->
+<section class="section">
+    <h2 class="section-title">性能数据</h2>
+    <div class="metrics-grid">
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">响应时间</span>
+            <span class="metric-value">{{ case.response_time }}s</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">Token 消耗</span>
+            <span class="metric-value">{{ case.tokens }}</span>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

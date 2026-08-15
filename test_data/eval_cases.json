@@ -1,0 +1,76 @@
+[
+    {
+        "id": "eval_001",
+        "input": "北京今天天气怎么样？",
+        "expected_tool": "weather_tool",
+        "expected_arguments": {"city": "北京"},
+        "expected_keywords": ["北京"]
+    },
+    {
+        "id": "eval_002",
+        "input": "上海今天气温多少度？",
+        "expected_tool": "weather_tool",
+        "expected_arguments": {"city": "上海"},
+        "expected_keywords": ["上海"]
+    },
+    {
+        "id": "eval_003",
+        "input": "广州今天天气如何？",
+        "expected_tool": "weather_tool",
+        "expected_arguments": {"city": "广州"},
+        "expected_keywords": ["广州"]
+    },
+    {
+        "id": "eval_004",
+        "input": "帮我算一下 123 乘以 456",
+        "expected_tool": "calculator_tool",
+        "expected_arguments": {"expression": "123*456"},
+        "expected_keywords": ["56088"]
+    },
+    {
+        "id": "eval_005",
+        "input": "999 加 1 等于多少？",
+        "expected_tool": "calculator_tool",
+        "expected_arguments": {"expression": "999+1"},
+        "expected_keywords": ["1000"]
+    },
+    {
+        "id": "eval_006",
+        "input": "计算 100 除以 4",
+        "expected_tool": "calculator_tool",
+        "expected_arguments": {"expression": "100/4"},
+        "expected_keywords": ["25"]
+    },
+    {
+        "id": "eval_007",
+        "input": "帮我创建明天下午3点的开会提醒",
+        "expected_tool": "calendar_tool",
+        "expected_arguments": {"title": "开会"},
+        "expected_keywords": ["提醒"]
+    },
+    {
+        "id": "eval_008",
+        "input": "提醒我下周一早上9点交报告",
+        "expected_tool": "calendar_tool",
+        "expected_arguments": {"title": "交报告"},
+        "expected_keywords": ["提醒"]
+    },
+    {
+        "id": "eval_009",
+        "input": "北京今天天气怎么样？如果下雨，帮我创建明天早上8点的带伞提醒",
+        "expected_tool": "weather_tool",
+        "expected_arguments": {"city": "北京"},
+        "expected_keywords": ["提醒"],
+        "expected_tools_sequence": ["weather_tool", "calendar_tool"],
+        "is_workflow": true
+    },
+    {
+        "id": "eval_010",
+        "input": "计算 50 乘以 3，然后帮我创建今天下午5点的提交报告提醒",
+        "expected_tool": "calculator_tool",
+        "expected_arguments": {"expression": "50*3"},
+        "expected_keywords": ["150", "提醒"],
+        "expected_tools_sequence": ["calculator_tool", "calendar_tool"],
+        "is_workflow": true
+    }
+]

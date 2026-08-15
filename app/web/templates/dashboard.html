@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}仪表盘 - AI Agent 测试报告{% endblock %}
+
+{% block content %}
+
+<!-- ====== 指标概览区 ====== -->
+<section class="section">
+    <h2 class="section-title">指标概览</h2>
+    <div class="metrics-grid">
+        <!-- 5 个准确率指标卡片 -->
+        <div class="metric-card">
+            <span class="metric-label">工具选择准确率</span>
+            <span class="metric-value">{{ (report.metrics.tool_selection_accuracy * 100) | round(1) }}%</span>
+            <span class="metric-tag tag-pass">PASS</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">参数准确率</span>
+            <span class="metric-value">{{ (report.metrics.tool_parameter_accuracy * 100) | round(1) }}%</span>
+            <span class="metric-tag tag-pass">PASS</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">任务成功率</span>
+            <span class="metric-value">{{ (report.metrics.task_success_rate * 100) | round(1) }}%</span>
+            <span class="metric-tag tag-pass">PASS</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">回答一致性</span>
+            <span class="metric-value">{{ (report.metrics.answer_consistency_rate * 100) | round(1) }}%</span>
+            <span class="metric-tag tag-pass">PASS</span>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">工作流成功率</span>
+            <span class="metric-value">{{ (report.metrics.workflow_success_rate * 100) | round(1) }}%</span>
+            <span class="metric-tag tag-pass">PASS</span>
+        </div>
+    </div>
+</section>
+
+<!-- ====== 性能指标区 ====== -->
+<section class="section">
+    <h2 class="section-title">性能指标</h2>
+    <div class="metrics-grid">
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">平均响应时间</span>
+            <span class="metric-value">{{ report.performance.avg_time }}s</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">P50 (中位数)</span>
+            <span class="metric-value">{{ report.performance.p50_time }}s</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">P95</span>
+            <span class="metric-value">{{ report.performance.p95_time }}s</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">P99</span>
+            <span class="metric-value">{{ report.performance.p99_time }}s</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">错误率</span>
+            <span class="metric-value">{{ (report.performance.error_rate * 100) | round(1) }}%</span>
+        </div>
+        <div class="metric-card metric-card-blue">
+            <span class="metric-label">平均 Token</span>
+            <span class="metric-value">{{ report.performance.avg_tokens | round(0) }}</span>
+        </div>
+    </div>
+</section>
+
+<!-- ====== 图表区 ====== -->
+<section class="section">
+    <h2 class="section-title">可视化图表</h2>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3 class="chart-title">各用例响应时间 (秒)</h3>
+            <canvas id="responseTimeChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3 class="chart-title">准确率指标雷达图</h3>
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- ====== 用例列表 ====== -->
+<section class="section">
+    <h2 class="section-title">评测用例 (共 {{ report.total }} 个)</h2>
+    <table class="case-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>用户输入</th>
+                <th>响应时间</th>
+                <th>Token</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for case in report.case_results %}
+            <tr>
+                <td class="case-id">{{ case.case_id }}</td>
+                <td class="case-input">{{ case.input }}</td>
+                <td>{{ case.response_time }}s</td>
+                <td>{{ case.tokens }}</td>
+                <td>
+                    {% if case.task_success %}
+                    <span class="metric-tag tag-pass">PASS</span>
+                    {% else %}
+                    <span class="metric-tag tag-fail">FAIL</span>
+                    {% endif %}
+                </td>
+                <td><a href="/case/{{ case.case_id }}" class="btn-detail">详情</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<!-- ====== 图表 JS ====== -->
+<script>
+// 从后端数据中提取图表所需数据
+const caseIds = {{ report.case_results | map(attribute='case_id') | list | tojson }};
+const responseTimes = {{ report.case_results | map(attribute='response_time') | list | tojson }};
+const tokenCounts = {{ report.case_results | map(attribute='tokens') | list | tojson }};
+
+// 图表 1：响应时间柱状图
+const ctx1 = document.getElementById('responseTimeChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: caseIds,
+        datasets: [{
+            label: '响应时间 (秒)',
+            data: responseTimes,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
+// 图表 2：准确率雷达图
+const ctx2 = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'radar',
+    data: {
+        labels: ['工具选择', '参数准确', '任务成功', '回答一致', '工作流成功'],
+        datasets: [{
+            label: '准确率 (%)',
+            data: [
+                {{ (report.metrics.tool_selection_accuracy * 100) | round(1) }},
+                {{ (report.metrics.tool_parameter_accuracy * 100) | round(1) }},
+                {{ (report.metrics.task_success_rate * 100) | round(1) }},
+                {{ (report.metrics.answer_consistency_rate * 100) | round(1) }},
+                {{ (report.metrics.workflow_success_rate * 100) | round(1) }}
+            ],
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            r: { beginAtZero: true, max: 100 }
+        }
+    }
+});
+</script>
+
+{% endblock %}
