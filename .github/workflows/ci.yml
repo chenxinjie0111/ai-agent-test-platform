@@ -40,7 +40,7 @@ jobs:
 
       # 第 4 步：运行单元测试（不需要 LLM API Key）
       # 只跑不依赖 LLM 的测试：指标计算逻辑 + 权限单元测试
+      # 用 python -m pytest 而非 pytest：确保项目根目录在 sys.path 中
       - name: Run unit tests
         run: |
-          pytest tests/test_metrics.py -v --tb=short
-          pytest tests/test_permission.py::TestPermissionUnit -v --tb=short
+          python -m pytest tests/test_metrics.py tests/test_permission.py::TestPermissionUnit -v --tb=short
